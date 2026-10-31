@@ -1,0 +1,19 @@
+{
+    "name": "HSA — Luyện thi ĐGNL",
+    "short_name": "HSA",
+    "lang": "vi",
+    "start_url": "./",
+    "scope": "./",
+    "display": "standalone",
+    "background_color": "#FFFFFF",
+    "theme_color": "#1565C0",
+    "description": "Lớp luyện thi Đánh giá năng lực ĐHQG Hà Nội — bài giảng, tài liệu và thi thử.",
+    "_orientation": "KHÔNG khoá hướng màn hình. Xem video và đọc bảng số liệu đều cần xoay ngang; khoá portrait-primary chỉ chặn đúng việc đó, và chỉ chặn trên bản đã cài nên trong tab không ai thấy.",
+    "prefer_related_applications": false,
+    "icons": [
+        { "src": "icons/Icon-192.png", "sizes": "192x192", "type": "image/png" },
+        { "src": "icons/Icon-512.png", "sizes": "512x512", "type": "image/png" },
+        { "src": "icons/Icon-maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+        { "src": "icons/Icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    ]
+}

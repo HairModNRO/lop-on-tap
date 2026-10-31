@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Lớp luyện thi Đánh giá năng lực ĐHQG Hà Nội — bài giảng, tài liệu và thi thử.">
+  <meta name="theme-color" content="#1565C0" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#101317" media="(prefers-color-scheme: dark)">
+
+  <!--
+    Hai thẻ cho cùng một việc, và cần cả hai. `mobile-web-app-capable` là chuẩn
+    hiện nay; `apple-mobile-web-app-capable` là bản riêng của Apple, và iOS
+    dưới 16.4 chỉ nghe thẻ đó — thiếu nó thì biểu tượng vẫn thêm được vào màn
+    hình chính nhưng bấm vào lại mở ra một tab Safari có thanh địa chỉ.
+  -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="HSA">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon-180.png">
+  <link rel="icon" type="image/png" href="favicon.png">
+
+  <title>HSA — Luyện thi ĐGNL</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+
+<!--
+  Màn hình chờ nằm sẵn trong trang, không phải do JavaScript dựng. Nó hiện từ
+  byte đầu tiên — nhưng lần này cái nó che chỉ là vài chục kilobyte mã, không
+  phải chín megabyte, nên gần như không ai kịp nhìn thấy.
+-->
+<div id="ung-dung">
+  <div class="giua" id="cho">
+    <div class="quay"></div>
+  </div>
+</div>
+
+<noscript>
+  <p style="padding:24px">Trang này cần JavaScript. Bật JavaScript trong cài đặt trình duyệt rồi tải lại.</p>
+</noscript>
+
+<script>
+  // Bắt sự kiện mời cài TRƯỚC khi mã ứng dụng chạy. Chrome bắn nó đúng một
+  // lần, ngay sau khi trang tải xong, và đăng ký muộn là không bao giờ thấy.
+  (function () {
+    var hoan = null;
+    addEventListener('beforeinstallprompt', function (e) {
+      e.preventDefault();
+      hoan = e;
+      // Báo cho ứng dụng. Chrome bắn sự kiện này SAU khi mã khởi động đã chạy,
+      // nên chỉ hỏi một lần lúc mở là hỏi lúc chưa có gì — và nút "Cài ứng
+      // dụng" không bao giờ hiện ra trên một trình duyệt cài được hoàn toàn.
+      dispatchEvent(new Event('hsa-co-the-cai'));
+    });
+    addEventListener('appinstalled', function () { hoan = null; });
+    window.hsaCoTheCai = function () { return hoan !== null; };
+    window.hsaCai = function () {
+      if (!hoan) return Promise.resolve(false);
+      var e = hoan;
+      hoan = null;
+      e.prompt();
+      return e.userChoice.then(function (c) { return c.outcome === 'accepted'; });
+    };
+  })();
+
+  if ('serviceWorker' in navigator) {
+    addEventListener('load', function () {
+      navigator.serviceWorker.register('sw.js').catch(function (e) {
+        // http:// hoặc file:// thì trình duyệt từ chối thẳng. Không chết người
+        // — chỉ là không có bộ đệm và không có lời mời cài.
+        console.warn('Không đăng ký được service worker:', e);
+      });
+    });
+  }
+</script>
+
+<script type="module" src="js/app.js"></script>
+</body>
+</html>
