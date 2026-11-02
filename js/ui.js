@@ -2,6 +2,7 @@
 // thứ gõ lại ở hai chục chỗ thì nên có tên.
 
 import { ICON } from '../vendor/icon/icon.js';
+import { layAnh } from './nguon.js';
 
 /**
  * Dựng một phần tử.
@@ -48,6 +49,30 @@ function them(el, children) {
  * Font là đúng file Flutter dùng, cắt xuống còn 37 glyph — 3 KB thay vì 1,6 MB
  * — nên biểu tượng ở đây giống hệt bản cũ chứ không phải trông giống.
  */
+/**
+ * Hình của một câu hỏi, hoặc null nếu câu không có hình.
+ *
+ * Nhiều câu hình học, thí nghiệm và biểu đồ có đề bài NẰM TRONG hình, nên thiếu
+ * nó thì câu không trả lời được. Vì vậy khi tải lỗi thì nói ra, thay vì để lại
+ * một ô trống trông như câu hỏi vốn chỉ có mấy dòng chữ.
+ */
+export function veAnh(anh) {
+  if (!anh) return null;
+
+  const khung = h('div', { class: 'khung-anh' }, dangTai('Đang tải hình…'));
+  layAnh(anh)
+    .then((duong) => {
+      xoaHet(khung);
+      khung.append(h('img', { class: 'anh-cau', src: duong, alt: 'Hình của câu hỏi' }));
+    })
+    .catch((loi) => {
+      console.error(loi);
+      xoaHet(khung);
+      khung.append(h('p', { class: 'mo' }, 'Không tải được hình của câu này.'));
+    });
+  return khung;
+}
+
 export function bt(ten, them = '') {
   const el = document.createElement('span');
   el.className = 'mi' + (them ? ' ' + them : '');

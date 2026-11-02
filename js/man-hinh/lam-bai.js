@@ -1,4 +1,4 @@
-import { h, dongHo, dangTai, baoLoi, nhan } from '../ui.js';
+import { h, dongHo, dangTai, baoLoi, nhan, veAnh } from '../ui.js';
 import { trang, datThan } from '../trang.js';
 import { di } from '../router.js';
 import { veToan } from '../toan.js';
@@ -105,6 +105,8 @@ function dung(el, trangThai, bai, laMoLai) {
 
     const than = h('div', null, veToan(q.deBai || '', { khoi: true }));
     than.firstChild.classList.add('de-bai');
+    // Sau phần chữ, trước các phương án: với câu hình học thì hình LÀ đề bài.
+    than.append(veAnh(q.anh) ?? '');
 
     if (q.dapAn.length) {
       than.append(

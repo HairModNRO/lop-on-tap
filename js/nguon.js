@@ -114,6 +114,29 @@ export async function layTaiLieu(ma) {
   return new Blob([b], { type: 'application/pdf' });
 }
 
+/**
+ * Ảnh của một câu hỏi, giải mã ra đường blob.
+ *
+ * Đệm theo mã, và cố ý KHÔNG thu hồi đường blob. Màn làm bài vẽ lại toàn bộ câu
+ * sau mỗi lần bấm đáp án, nên tạo đường mới mỗi lượt vẽ là vừa giải mã lại vừa
+ * bỏ rơi đường cũ — rò bộ nhớ đúng lúc học viên đang làm nhanh nhất. Cả bộ ảnh
+ * của một đề chỉ vài trăm KB, và một ảnh dùng ở cả đề gốc lẫn đề thi thử thì
+ * chỉ tải một lần.
+ */
+const demAnh = new Map();
+
+export function layAnh({ ma, kieu }) {
+  if (!demAnh.has(ma)) {
+    demAnh.set(
+      ma,
+      giaiMaFile(`du-lieu/anh/${ma}.bin`).then((b) =>
+        URL.createObjectURL(new Blob([b], { type: kieu })),
+      ),
+    );
+  }
+  return demAnh.get(ma);
+}
+
 export function demBai(phan) {
   return phan.nhom.reduce((t, n) => t + n.bai.length, 0);
 }

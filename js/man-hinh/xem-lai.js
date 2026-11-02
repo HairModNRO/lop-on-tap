@@ -1,4 +1,4 @@
-import { h, bt, soDiem, ngayGio, khoangThoiGian, trong } from '../ui.js';
+import { h, bt, soDiem, ngayGio, khoangThoiGian, trong, veAnh } from '../ui.js';
 import { trang } from '../trang.js';
 import { timBaiDaLam } from '../thi.js';
 import { veToan } from '../toan.js';
@@ -48,6 +48,7 @@ function veCau(c, i) {
       h('span', { class: 'nhan-nho ' + lop }, nhan),
     ),
     veToan(c.deBai || '', { khoi: true }),
+    veAnh(c.anh),
   );
 
   if (c.dapAn.length) {

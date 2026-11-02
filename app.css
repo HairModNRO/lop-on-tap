@@ -392,6 +392,20 @@ input:focus, textarea:focus {
 .de-bai { font-size: 16px; line-height: 1.6; margin: 16px 0 20px; }
 .de-bai img, .hinh img { max-width: 100%; border-radius: 8px; }
 
+/* Hình của câu hỏi. Nền trắng cố định, không theo nền tối: hình của bộ đề là
+   nét đen trên nền trong suốt, nên trên nền tối chúng biến thành đen trên đen. */
+.khung-anh { margin: 0 0 20px; }
+.anh-cau {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 0 auto;
+  background: #fff;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid var(--outline-variant);
+}
+
 /* RadioListTile */
 .pa {
   display: flex;
