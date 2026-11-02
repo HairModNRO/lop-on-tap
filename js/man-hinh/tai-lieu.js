@@ -5,9 +5,8 @@ import { layTaiLieu, layDanhMuc } from '../nguon.js';
 /**
  * Đọc một tài liệu PDF.
  *
- * Tài liệu nằm ở Releases của repo, đã mã hoá: 1,8 GB không vừa giới hạn 1 GB
- * của GitHub Pages, và để trần thì ai mở trang Releases cũng tải được cả khoá.
- * Trình duyệt tải về rồi giải mã tại chỗ.
+ * Tài liệu nằm ở các kho Pages riêng, đã mã hoá: 1,8 GB không vừa giới hạn
+ * 1 GB mỗi site. Trình duyệt tải về rồi giải mã tại chỗ.
  *
  * Phần hiển thị giao lại cho trình duyệt — nó đã có sẵn một trình đọc PDF tốt
  * hơn bất cứ thứ gì đáng mang theo.
@@ -30,8 +29,8 @@ export default function manHinhTaiLieu({ ma }) {
         h(
           'div',
           { class: 'cuoc deu tren' },
-          h('button', { class: 'vien', onclick: () => moRieng(duongBlob) }, bt('open_in_new', 'vua'), 'Mở riêng'),
-          h('button', { class: 'vien', onclick: () => taiVe(duongBlob, ten) }, bt('download', 'vua'), 'Tải về'),
+          h('button', { class: 'vien', onclick: () => moRieng(blob, duongBlob, ten) }, bt('open_in_new', 'vua'), 'Mở riêng'),
+          h('button', { class: 'vien', onclick: () => taiVe(blob, duongBlob, ten) }, bt('download', 'vua'), 'Tải về'),
         ),
         // <object> chứ không <iframe>: nội dung thay thế bên trong chỉ hiện khi
         // trình duyệt KHÔNG dựng được PDF, nên iPhone — nơi Safari từ chối vẽ
@@ -43,7 +42,7 @@ export default function manHinhTaiLieu({ ma }) {
             'div',
             { class: 'giua' },
             h('p', { class: 'mo' }, 'Trình duyệt này không mở PDF ngay trong trang.'),
-            h('button', { class: 'chinh', onclick: () => moRieng(duongBlob) }, 'Mở tài liệu'),
+            h('button', { class: 'chinh', onclick: () => moRieng(blob, duongBlob, ten) }, 'Mở tài liệu'),
           ),
         ),
       );
@@ -65,12 +64,43 @@ export default function manHinhTaiLieu({ ma }) {
   return el;
 }
 
-function moRieng(duong) {
+/**
+ * Trong vỏ Android: WebView không vẽ được PDF và cũng bỏ qua `<a download>`.
+ *
+ * Đây là điểm nối duy nhất giữa trang và vỏ. Vỏ chỉ tiêm `__hsaThe` vào khung
+ * chính, nên iframe của YouTube chạy cùng WebView không gọi được sang.
+ */
+const trongVo = () => typeof HsaApp !== 'undefined' && HsaApp && typeof __hsaThe === 'string';
+
+/** Byte đi theo khúc: có tài liệu 38 MB, và `String.fromCharCode(...u8)` trên
+ *  cả mảng là vượt giới hạn tham số của hàm. */
+async function guiSangVo(blob, ten) {
+  const u8 = new Uint8Array(await blob.arrayBuffer());
+  HsaApp.batDau(__hsaThe, tenFile(ten));
+  const KHUC = 3 << 20;
+  for (let i = 0; i < u8.length; i += KHUC) {
+    const p = u8.subarray(i, i + KHUC);
+    let s = '';
+    for (let j = 0; j < p.length; j += 8192) s += String.fromCharCode.apply(null, p.subarray(j, j + 8192));
+    HsaApp.them(__hsaThe, btoa(s));
+  }
+  HsaApp.xong(__hsaThe);
+}
+
+function moRieng(blob, duong, ten) {
+  if (trongVo()) {
+    guiSangVo(blob, ten).catch((e) => nhan('Không mở được tài liệu: ' + e.message));
+    return;
+  }
   const w = open(duong, '_blank');
   if (!w) nhan('Trình duyệt chặn cửa sổ mới. Dùng nút Tải về.');
 }
 
-function taiVe(duong, ten) {
+function taiVe(blob, duong, ten) {
+  if (trongVo()) {
+    guiSangVo(blob, ten).catch((e) => nhan('Không lưu được tài liệu: ' + e.message));
+    return;
+  }
   const a = h('a', { href: duong, download: tenFile(ten), style: { display: 'none' } });
   document.body.append(a);
   a.click();
