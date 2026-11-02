@@ -2,7 +2,6 @@ import { h, bt } from '../ui.js';
 import { trangNap } from '../trang.js';
 import { layDanhMuc, demBai, demVideo } from '../nguon.js';
 import { di } from '../router.js';
-import { dongLai } from '../app.js';
 
 export default function manHinhDanhMuc() {
   return trangNap(
@@ -14,9 +13,6 @@ export default function manHinhDanhMuc() {
         nut('quiz', 'Bài kiểm tra', () => di('/de-thi')),
         nut('shuffle', 'Thi thử theo môn', () => di('/thi-thu')),
         nut('history', 'Lịch sử làm bài', () => di('/lich-su')),
-        nut('logout', 'Khoá lớp trên máy này', () => {
-          if (confirm('Quên mật khẩu lớp trên máy này? Lịch sử làm bài vẫn giữ.')) dongLai();
-        }),
       ],
     },
     layDanhMuc,
