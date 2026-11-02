@@ -395,6 +395,8 @@ input:focus, textarea:focus {
 /* Hình của câu hỏi. Nền trắng cố định, không theo nền tối: hình của bộ đề là
    nét đen trên nền trong suốt, nên trên nền tối chúng biến thành đen trên đen. */
 .khung-anh { margin: 0 0 20px; }
+/* Câu kèm hai hình: tách chúng ra, nếu không trông như một hình bị cắt. */
+.khung-anh .anh-cau + .anh-cau { margin-top: 12px; }
 .anh-cau {
   display: block;
   max-width: 100%;

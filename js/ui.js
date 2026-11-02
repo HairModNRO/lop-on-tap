@@ -50,26 +50,30 @@ function them(el, children) {
  * — nên biểu tượng ở đây giống hệt bản cũ chứ không phải trông giống.
  */
 /**
- * Hình của một câu hỏi, hoặc null nếu câu không có hình.
+ * Hình của một câu hỏi — một danh sách, vì có câu kèm hai hình.
  *
  * Nhiều câu hình học, thí nghiệm và biểu đồ có đề bài NẰM TRONG hình, nên thiếu
  * nó thì câu không trả lời được. Vì vậy khi tải lỗi thì nói ra, thay vì để lại
  * một ô trống trông như câu hỏi vốn chỉ có mấy dòng chữ.
  */
-export function veAnh(anh) {
-  if (!anh) return null;
+export function veAnh(ds) {
+  if (!ds || !ds.length) return null;
 
   const khung = h('div', { class: 'khung-anh' }, dangTai('Đang tải hình…'));
-  layAnh(anh)
+
+  Promise.all(ds.map(layAnh))
     .then((duong) => {
       xoaHet(khung);
-      khung.append(h('img', { class: 'anh-cau', src: duong, alt: 'Hình của câu hỏi' }));
+      khung.append(
+        ...duong.map((d) => h('img', { class: 'anh-cau', src: d, alt: 'Hình của câu hỏi' })),
+      );
     })
     .catch((loi) => {
       console.error(loi);
       xoaHet(khung);
       khung.append(h('p', { class: 'mo' }, 'Không tải được hình của câu này.'));
     });
+
   return khung;
 }
 
